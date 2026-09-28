@@ -93,7 +93,7 @@ if ($Action -eq 'Uninstall') {
 # The lock starts after relaunches so the worker process owns the log file.
 if (-not (Enter-DevConfigSingleInstance)) {
     Write-Host ''
-    Write-Host 'Calm OS is already running in another window.' -ForegroundColor Yellow
+    Write-Host 'Calm OS setup is already running in another window.' -ForegroundColor Yellow
     Write-Host 'Switch to it rather than starting a second copy -- they would fight over the same installs.' -ForegroundColor DarkGray
     Wait-DevConfigKeyPress
     exit 1
@@ -196,7 +196,7 @@ if ($Action -eq 'Uninstall') {
 } elseif ($Script:DevConfigResumed) {
     Write-Host "Welcome back. Resuming Calm OS setup ($Action) after the reboot..." -ForegroundColor Cyan
 } else {
-    Write-Host "Calm OS setup ($Action) -- $($phases.Count) phases, one reboot along the way (expected, not an error)" -ForegroundColor Cyan
+    Write-Host "Calm OS setup ($Action) -- $($phases.Count) phases, may reboot once to finish WSL (expected, not an error)" -ForegroundColor Cyan
 }
 
 $failure = $null

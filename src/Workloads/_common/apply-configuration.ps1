@@ -19,7 +19,7 @@
        caller's *current* PowerShell session can see freshly installed
        executables (winget updates the registry but not running processes).
     3. Assert each command in `-RequireCommands` resolves on PATH.
-    4. Print `INSTALL_OK: <Id>` as the final line; CI asserts on this.
+    4. Print `INSTALL_OK: <Id>` as the final line, a marker for scanning logs.
 
 .PARAMETER Id
   Flow id, only used in log prefixes and the final sentinel line.

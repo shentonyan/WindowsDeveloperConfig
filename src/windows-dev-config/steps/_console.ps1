@@ -46,7 +46,8 @@ function Wait-DevConfigKeyPress {
 
     Write-Host ''
     $minutes = [Math]::Round($TimeoutSeconds / 60)
-    Write-Host "$Message (closes on its own in $minutes minutes if you step away)" -ForegroundColor DarkGray
+    $unit = if ($minutes -eq 1) { 'minute' } else { 'minutes' }
+    Write-Host "$Message (closes on its own in $minutes $unit if you step away)" -ForegroundColor DarkGray
 
     # Polling allows unattended windows to close without waiting for a key press.
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)

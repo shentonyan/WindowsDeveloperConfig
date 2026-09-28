@@ -5,8 +5,9 @@
 .DESCRIPTION
   This script is a thin CI/dev shim. The core artifact for the WinForms flow
   is `configuration.winget` in this directory — a winget DSC configuration
-  that declaratively installs the .NET 10 SDK (which includes the Windows
-  Desktop targeting pack used by `UseWindowsForms=true` projects).
+  that declaratively enables Developer Mode and installs the .NET 10 SDK,
+  Visual Studio Community, and the VS workloads for WinForms development
+  (several GB).
 
   The shim exists only to:
     * apply the DSC config with retry (hosted-runner networks are flaky),

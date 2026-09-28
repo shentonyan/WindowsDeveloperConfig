@@ -186,8 +186,8 @@ function Invoke-CalmOsBootstrap {
             [Parameter(Mandatory)] [string] $Destination
         )
 
+        # $Ref is always a resolved commit SHA here, so a branch URL would only 404.
         $candidates = @(
-            "https://github.com/$repo/archive/refs/heads/$Ref.zip"
             "https://github.com/$repo/archive/$Ref.zip"
         )
 

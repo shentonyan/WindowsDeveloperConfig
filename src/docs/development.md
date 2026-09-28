@@ -76,40 +76,30 @@ for build + configuration details.
 ## Repository layout
 
 ```
-Workloads/
-  _common/         # shared PowerShell shim helpers (retry, refresh PATH, preflight, assert-winget-configure, apply-configuration)
-  typescript/      # configuration.winget (core) + install.ps1 (thin shim)
-  php/             # configuration.winget (core) + install.ps1 (thin shim)
-  python/          # configuration.winget (core) + install.ps1 (thin shim)
-  dotnet/          # configuration.winget (core) + install.ps1 (thin shim)
-  go/              # configuration.winget (core) + install.ps1 (thin shim)
-  java/            # configuration.winget (core) + install.ps1 (thin shim)
-  rust/            # configuration.winget (core) + install.ps1 (thin shim)
-  winforms/        # configuration.winget (core) + install.ps1 (thin shim)
-  winui/           # configuration.winget (core) + install.ps1 (thin shim)
-windows-dev-config/    # Windows Dev Config — bootstrap.ps1 (remote entry) + dev-config.ps1 (orchestrator) + steps/*.ps1 + README.md
-wsl-comfort/           # Comfort Shell — install.ps1 (Windows side) + comfort-shell-bootstrap.sh (Linux side, self-contained) + readme.md
-tests/
-  _harness/          # build-run-diff harness used by CI:
-                     #   run-flow.ps1   - all flows (build + run + diff stdout)
-                     #   run-server.ps1 - helper for future server scenarios
-                     #                    (kept idle; no flow currently uses it)
-  typescript/        # hello.ts + expected.txt
-  php/               # hello.php + expected.txt
-  python/            # hello.py + expected.txt
-  dotnet/            # hello.csproj + Program.cs + expected.txt
-  go/                # hello.go + expected.txt
-  java/              # Hello.java + expected.txt
-  rust/              # Cargo.toml + src/main.rs + expected.txt
-  winforms/          # hello.csproj + Program.cs + expected.txt
-  winui/             # hello.csproj + Program.cs + expected.txt
-  calm-os/           # probe.ps1 + expected.txt (manual-only flow)
-  comfort-shell/     # hello.sh + expected.txt (manual-only flow)
-manifest.yml         # declarative list of flows consumed by CI **and** by the extension
-future/
-  cmdpal/            # PowerToys Command Palette extension (reads manifest.yml)
 .github/workflows/
-  ci.yml             # discover -> per-OS matrix -> summary
+  ci.yml               # discover -> per-OS matrix -> summary
+  signed-copy-guard.yml
+src/
+  Workloads/
+    _common/           # shared PowerShell shim helpers (retry, refresh PATH, preflight, assert-winget-configure, apply-configuration)
+    typescript/  php/  python/  dotnet/  go/  java/  rust/
+    sql/  powershell/  winforms/  winappcli/  winui/
+                       # each: configuration.winget (core) + install.ps1 (thin shim)
+  windows-dev-config/  # Windows Dev Config — bootstrap.ps1 (remote entry) + dev-config.ps1 (orchestrator) + steps/*.ps1 + README.md
+  wsl-comfort/         # Comfort Shell — install.ps1 (Windows side) + comfort-shell-bootstrap.sh (Linux side, self-contained) + readme.md
+  tests/
+    _harness/          # build-run-diff harness used by CI:
+                       #   run-flow.ps1   - all flows (build + run + diff stdout)
+                       #   run-server.ps1 - helper for future server scenarios
+                       #                    (kept idle; no flow currently uses it)
+    <flow>/            # hello world (or probe.ps1) + expected.txt, one per flow in manifest.yml
+  manifest.yml         # declarative list of flows consumed by CI **and** by the extension
+  tools/               # check-signed-drift.ps1 (signed-copy drift comparator)
+  docs/                # this guide
+  future/
+    cmdpal/            # PowerToys Command Palette extension (reads manifest.yml)
+Workloads/  windows-dev-config/  wsl-comfort/
+                       # signed release copies of the src/ trees (see below)
 ```
 
 ## Repo layout: signed vs source
@@ -341,8 +331,9 @@ Adding a language is a **data change**, not a workflow change:
 2. Add a thin `install.ps1` shim next to it that delegates to
    `Workloads/_common/apply-configuration.ps1` with the flow id, config
    path, and list of commands that must be on PATH afterwards. The shim ends
-   with `INSTALL_OK: <lang>`, which CI asserts on.
-3. Add a hello world under `tests/<lang>/` together with an `expected.txt`
+   with `INSTALL_OK: <lang>`, a success marker for scanning logs (CI checks
+   the exit code and the hello-world output, not this line).
+3. Add a hello world under `src/tests/<lang>/` together with an `expected.txt`
    containing its exact stdout.
 4. Append an entry to `manifest.yml` describing the build command, run
    command, and expected-output path for each supported OS.

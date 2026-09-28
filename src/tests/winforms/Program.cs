@@ -1,9 +1,9 @@
 // Hello-world probe for the WinForms flow.
 //
-// We don't show a window (CI runners are headless for interactive UI), but we
-// *do* construct a WinForms control and read back its properties — this forces
-// the Windows Forms assemblies and the Windows Desktop runtime to actually
-// load. If the .NET SDK install was incomplete (e.g. missing Desktop targeting
+// Constructing a WinForms control and reading back its properties forces the
+// Windows Forms assemblies and the Windows Desktop runtime to actually load.
+// The window is then shown for the person running this manual-only flow; close
+// it to finish. If the .NET SDK install was incomplete (e.g. missing Desktop targeting
 // pack), the `new Form()` call below would fail at runtime and the harness
 // would flag the flow broken.
 
