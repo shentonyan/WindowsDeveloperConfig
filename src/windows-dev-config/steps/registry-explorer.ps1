@@ -126,7 +126,7 @@ function Invoke-RegistryExplorerPhase {
             KeyPath     = $explorer
             ValueName   = 'ShowRecent'
             Value       = 0
-            Description = 'Disable frequent files in Quick Access'
+            Description = 'Disable recent files in Quick Access'
         }
         @{
             Name        = 'RecommendedFiles'

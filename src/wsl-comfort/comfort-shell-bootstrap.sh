@@ -156,8 +156,10 @@ confirm() {
 }
 
 ask_toggle() {
-  local var="$1" prompt="$2"
-  if confirm "$prompt" "y"; then
+  local var="$1" prompt="$2" default="y"
+  # Respect --no-* / --minimal flags as the default answer.
+  [ "${!var}" = "no" ] && default="n"
+  if confirm "$prompt" "$default"; then
     printf -v "$var" "yes"
   else
     printf -v "$var" "no"
@@ -310,7 +312,8 @@ install_shell() {
     ensure_apt zsh-syntax-highlighting 1
 
     local zsh_path
-    zsh_path="$(command -v zsh)"
+    # In --dry-run zsh may not be installed yet; fall back to its apt path.
+    zsh_path="$(command -v zsh || echo /usr/bin/zsh)"
 
     if [ "$IS_SKEL_MODE" -eq 1 ]; then
       info "Setting default shell for new users to $zsh_path (via /etc/adduser.conf)..."
@@ -817,7 +820,8 @@ parse_args() {
 }
 
 usage() {
-  cat <<EOF
+  # printf %b expands the color escapes; a plain heredoc prints them raw.
+  printf '%b' "$(cat <<EOF
 ${BOLD}😎 Comfort Shell 😎${NC} - WSL shell customization
 
 ${BOLD}Usage:${NC}
@@ -841,6 +845,7 @@ ${BOLD}Examples:${NC}
   $SCRIPT_NAME --shell=bash --no-brew  # Bash shell, skip Homebrew
   $SCRIPT_NAME --dry-run               # See what would change
 EOF
+)\n"
 }
 
 interactive_configure() {

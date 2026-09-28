@@ -121,7 +121,7 @@ $($helpOutput -join [Environment]::NewLine)
 
 To fix, run the canonical remediation script (elevates via UAC):
 
-  scripts\windows\_common\enable-winget-configure.ps1
+  Workloads\_common\enable-winget-configure.ps1
 
 It runs `winget configure --enable` and installs the required
 Microsoft.VCRedist.2015+.x64 dependency, then re-verifies. The CmdPal

@@ -303,6 +303,10 @@ function Reset-DevConfigTerminal {
         return -not $changed
     }
     if ($changed) {
+        # Keep the pre-setup backup so the user can still restore their original settings.
+        if (Test-Path -LiteralPath "$path.bak") {
+            $Script:DevConfigTerminalBackedUp = @($path)
+        }
         Save-DevConfigTerminalSettings -Path $path -Settings $settings
     }
 }

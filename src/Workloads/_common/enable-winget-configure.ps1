@@ -19,8 +19,8 @@
     2. Runs `winget configure --enable` -- the supported first-party way
        to turn the `configure` subcommand on. Ignores "already enabled"
        errors so re-runs are a safe no-op.
-    3. Installs `Microsoft.VCRedist.2015+.x64` -- the PackageManager
-       configure path transitively depends on the 2015+ x64 redistributable
+    3. Installs `Microsoft.VCRedist.2015+` (x64 or arm64, matching Windows) -- the PackageManager
+       configure path transitively depends on the 2015+ redistributable
        (AppInstaller does not always pull it in on its own). Skipped when
        already present.
     4. Re-runs the assert to confirm the fix took.
@@ -125,16 +125,21 @@ try {
     Write-Warning "winget configure --enable raised: $($_.Exception.Message)"
 }
 
-# --- Step 2: VCRedist 2015+ x64 -----------------------------------------
+# --- Step 2: VCRedist 2015+ (native architecture) ----------------------
+# PowerShell's process architecture can differ from Windows' native one.
+$vcRedistId = switch ((Get-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment').PROCESSOR_ARCHITECTURE) {
+    'ARM64' { 'Microsoft.VCRedist.2015+.arm64' }
+    default { 'Microsoft.VCRedist.2015+.x64' }
+}
 if ($SkipVCRedist) {
     Write-Host ''
     Write-Host 'Step 2/3: SKIPPED (via -SkipVCRedist)' -ForegroundColor DarkYellow
 } else {
     Write-Host ''
-    Write-Host 'Step 2/3: winget install Microsoft.VCRedist.2015+.x64' -ForegroundColor Cyan
+    Write-Host "Step 2/3: winget install $vcRedistId" -ForegroundColor Cyan
     & winget install `
         --source winget `
-        --id 'Microsoft.VCRedist.2015+.x64' `
+        --id $vcRedistId `
         --accept-package-agreements `
         --accept-source-agreements `
         --disable-interactivity 2>&1 | Write-Host

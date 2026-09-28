@@ -117,7 +117,10 @@ foreach ($cmd in $RequireCommands) {
     if (-not (Get-Command $cmd -ErrorAction SilentlyContinue)) {
         throw "$cmd not found on PATH after applying $ConfigFile"
     }
-    Write-Host "$cmd : $(& $cmd --version 2>&1 | Select-Object -First 1)"
+    # Informational only: some tools (e.g. go, gofmt) reject --version, and under
+    # EAP=Stop Windows PowerShell 5.1 turns redirected stderr into a terminating error.
+    $version = try { & $cmd --version 2>&1 | Select-Object -First 1 } catch { '(version unavailable)' }
+    Write-Host "$cmd : $version"
 }
 
 Write-Host "INSTALL_OK: $Id"

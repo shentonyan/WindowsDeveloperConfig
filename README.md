@@ -58,13 +58,13 @@ irm https://aka.ms/devconfig/full/setup.ps1 | iex
 ### Standard Experience
 - **Dev tools:** Windows Terminal, PowerShell 7, Git, GitHub CLI, GitHub Copilot CLI, VS Code, .NET SDK 10, Python 3.14 + uv, Node.js LTS + nvm, Coreutils for Windows, Windows App CLI, Oh My Posh, and PowerToys.
 - **Terminal:** PowerShell 7 as the default profile, Oh My Posh in your prompt, Cascadia Mono NF as the default font, and a GitHub Copilot profile in the dropdown.
-- **Windows settings:** Dark theme, long paths, File Explorer defaults, Start/Search settings, and Do Not Disturb
+- **Windows settings:** Dark theme, long paths, File Explorer defaults, and Start menu settings
 - **WSL:** WSL platform + Ubuntu, including the restart and the automatic resume afterwards.
 
 ### Full
 - **Everything from standard**
-- **Windows settings:** Developer Mode, Sudo, widgets off, and Edge policies, additional Start/Search/System Tray settings
-- **Remote Desktop:** Enabled and firewall settings set
+- **Windows settings:** Developer Mode, Sudo, widgets off, Edge policies, Do Not Disturb, and additional Search/System Tray settings
+- **Remote Desktop:** Enabled (the Windows Firewall rule is not opened)
 </details>
 
 Full details — every setting it changes, how to undo them, and troubleshooting: [`windows-dev-config/README.md`](./src/windows-dev-config/README.md).
@@ -81,7 +81,7 @@ WSL Comfort stands apart. It supports both interactive and non-interactive modes
 .\wsl-comfort\install.ps1
 ```
 
-Interactive by default. Use `-NonInteractive` for unattended runs; the bootstrap also takes `--minimal` for a smaller setup. The Linux half is standalone, so you can copy `comfort-shell-bootstrap.sh` onto any Ubuntu host and run it directly.
+Interactive by default. Use `-NonInteractive` for unattended runs; the bootstrap also takes `--minimal` for a smaller setup. The Linux half is standalone, so you can copy `comfort-shell-bootstrap.sh` into any Ubuntu WSL distro and run it directly.
 
 <details>
 <summary><strong>What you can pick</strong></summary>
@@ -146,7 +146,7 @@ Want the PATH refresh in your current shell? Use the matching shim instead of ca
 .\Workloads\python\install.ps1
 ```
 
-> **Heads up:** WinForms and WinUI 3 pull down several gigabytes of Visual Studio components. Fine on a real workstation, painful on a small VM.
+> **Heads up:** WinForms, WinUI 3, and Rust (which needs the Visual Studio C++ Build Tools) pull down several gigabytes of Visual Studio components. Fine on a real workstation, painful on a small VM.
 
 <br/>
 

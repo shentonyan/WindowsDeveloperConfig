@@ -197,10 +197,10 @@ session and prints a CI-friendly sentinel:
 
 ```powershell
 ./Workloads/typescript/install.ps1
-./tests/_harness/run-flow.ps1 -Id typescript `
-    -Build 'tsc tests/typescript/hello.ts' `
-    -Run   'node tests/typescript/hello.js' `
-    -Expected tests/typescript/expected.txt
+./src/tests/_harness/run-flow.ps1 -Id typescript `
+    -Build 'tsc src/tests/typescript/hello.ts' `
+    -Run   'node src/tests/typescript/hello.js' `
+    -Expected src/tests/typescript/expected.txt
 ```
 
 ## Testing and verifying locally
@@ -221,11 +221,11 @@ These don't touch your machine state and are a good pre-commit pass:
 
 ```bash
 # DSC YAML parses and has the expected shape.
-python3 -c "import yaml; yaml.safe_load(open('Workloads/typescript/configuration.winget'))"
-python3 -c "import yaml; yaml.safe_load(open('Workloads/php/configuration.winget'))"
+python3 -c "import yaml; yaml.safe_load(open('src/Workloads/typescript/configuration.winget'))"
+python3 -c "import yaml; yaml.safe_load(open('src/Workloads/php/configuration.winget'))"
 
 # manifest.yml parses (this is what CI's `discover` job consumes).
-python3 -c "import yaml; print(yaml.safe_load(open('manifest.yml')))"
+python3 -c "import yaml; print(yaml.safe_load(open('src/manifest.yml')))"
 ```
 
 ```powershell
@@ -272,10 +272,10 @@ This is exactly what CI does and is the definitive local test:
 # Expected tail of output: "INSTALL_OK: typescript"
 
 # b) Build + run the hello-world and diff its stdout against expected.txt.
-./tests/_harness/run-flow.ps1 -Id typescript `
-    -Build 'tsc tests/typescript/hello.ts' `
-    -Run   'node tests/typescript/hello.js' `
-    -Expected tests/typescript/expected.txt
+./src/tests/_harness/run-flow.ps1 -Id typescript `
+    -Build 'tsc src/tests/typescript/hello.ts' `
+    -Run   'node src/tests/typescript/hello.js' `
+    -Expected src/tests/typescript/expected.txt
 # Expected tail of output: "FLOW_OK: typescript"
 
 # c) Re-run the install to prove idempotence — it should succeed again and
@@ -292,13 +292,13 @@ If you're changing something shared (`Workloads/_common/*.ps1`, the harness,
 or the manifest schema) and want to exercise every flow the way CI will:
 
 ```powershell
-$flows = (ConvertFrom-Yaml (Get-Content -Raw ./manifest.yml)).flows |
+$flows = (ConvertFrom-Yaml (Get-Content -Raw ./src/manifest.yml)).flows |
     Where-Object { $_.os -contains 'windows' -and -not $_.manual_test }
 
 foreach ($f in $flows) {
     Write-Host "=== $($f.id) ==="
-    & $f.windows.install
-    ./tests/_harness/run-flow.ps1 `
+    & "./src/$($f.windows.install)"
+    ./src/tests/_harness/run-flow.ps1 `
         -Id       $f.id `
         -Build    ($f.windows.build ?? '') `
         -Run      $f.windows.run `
@@ -319,7 +319,7 @@ reject malformed flows with the same error CI would:
 ```bash
 python3 - <<'PY'
 import yaml, json
-doc = yaml.safe_load(open("manifest.yml"))
+doc = yaml.safe_load(open("src/manifest.yml"))
 for flow in doc.get("flows", []):
     for os_name in flow.get("os", []):
         spec = flow.get(os_name) or {}
