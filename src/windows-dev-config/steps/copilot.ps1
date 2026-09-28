@@ -109,8 +109,18 @@ function Test-DevConfigWinUIPluginInstalled {
     if (-not (Get-Command 'copilot' -ErrorAction SilentlyContinue)) {
         return $false
     }
-    $r = Invoke-DevConfigNativeCommand -FilePath 'copilot' -Arguments @('plugin', 'list')
-    return $r.ExitCode -eq 0 -and $r.Output -match '(?i)winui'
+    $r = Invoke-DevConfigNativeCommand -FilePath 'copilot' -Arguments @('plugin', 'list', '--json')
+    if ($r.ExitCode -ne 0) {
+        return $false
+    }
+    # Another marketplace's winui plugin (e.g. winui@awesome-copilot) must not count.
+    $plugins = $r.Output | ConvertFrom-Json
+    foreach ($plugin in $plugins) {
+        if ("$($plugin.name)@$($plugin.marketplace)" -eq $Script:DevConfigWinUIPlugin) {
+            return $true
+        }
+    }
+    return $false
 }
 
 function Install-DevConfigWinUIPlugin {

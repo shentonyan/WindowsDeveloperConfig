@@ -2,7 +2,7 @@
 
 A two-part installer that turns a fresh Windows + WSL machine into a cozy, opinionated-but-configurable shell: an Ubuntu distro running zsh + starship + modern CLI tools, surfaced through a themed Windows Terminal profile in a Cascadia Code Nerd Font. Every component is opt-in — pick the parts you want and skip the rest.
 
-The Windows half (`install.ps1`) handles WSL, the distro, the font, and the terminal profile. The Linux half (`comfort-shell-bootstrap.sh`) runs inside the distro and does all the shell customization. They are designed to be runnable independently — the bootstrap is a standalone script you can scp onto any Ubuntu host and run by itself.
+The Windows half (`install.ps1`) handles WSL, the distro, the font, and the terminal profile. The Linux half (`comfort-shell-bootstrap.sh`) runs inside the distro and does all the shell customization. They are designed to be runnable independently — the bootstrap is a standalone script you can copy into any Ubuntu WSL distro and run by itself.
 
 ## Table of Contents
 
@@ -30,7 +30,7 @@ The Windows half (`install.ps1`) handles WSL, the distro, the font, and the term
 - **Plenty of user options.** Pick zsh or bash; opt in or out of starship, the modern CLI bundle (`fzf`, `rg`, `fd`, `bat`, `eza`, `zoxide`), clipboard/`open` shims (`pbcopy`, `pbpaste`, `open`), Homebrew, and the git defaults — independently per flag, or in bulk with `--minimal`. Interactive runs prompt you for each toggle; `--non-interactive` accepts the defaults.
 - **One command end-to-end.** `.\install.ps1` from a fresh Windows machine takes you to a fully configured, themed Windows Terminal profile — including the WSL platform install, distro install, font, and reboot dance.
 - **Idempotent.** Safe to re-run. Managed blocks in dotfiles are replaced in place, the WT fragment is rewritten with a deterministic GUID, and already-installed packages are skipped.
-- **Standalone halves.** `comfort-shell-bootstrap.sh` does not require `install.ps1` — drop it on any Ubuntu host (WSL or not) and it works.
+- **Standalone halves.** `comfort-shell-bootstrap.sh` does not require `install.ps1` — drop it into any Ubuntu WSL distro and it works.
 
 ## Prerequisites
 
@@ -96,7 +96,7 @@ Picks `Ubuntu` (latest LTS) as the distro and forwards `--non-interactive` to th
 | Script | Runs on | Role |
 |--------|---------|------|
 | `install.ps1` | Windows (PowerShell 5.1 or 7) | Orchestrator: ensures WSL, picks/installs a distro, invokes the bootstrap inside it, installs the font, drops the WT profile. |
-| `comfort-shell-bootstrap.sh` | Ubuntu (inside WSL or bare-metal) | Installer: configures the shell, prompt, tools, shims, Homebrew, git defaults, and dotfiles. |
+| `comfort-shell-bootstrap.sh` | Ubuntu (inside WSL) | Installer: configures the shell, prompt, tools, shims, Homebrew, git defaults, and dotfiles. |
 
 ---
 
@@ -198,7 +198,7 @@ This is what makes the Windows-side flow work on a freshly installed distro that
 
 | Decision | Rationale |
 |----------|-----------|
-| Two scripts instead of one | The bootstrap is genuinely useful on its own (any Ubuntu host). Splitting it means `install.ps1` is a thin orchestrator and the actual shell setup is portable. |
+| Two scripts instead of one | The bootstrap is genuinely useful on its own (any Ubuntu WSL distro). Splitting it means `install.ps1` is a thin orchestrator and the actual shell setup is portable. |
 | Auto-resume via RunOnce + base64-JSON | `wsl --install` always requires a reboot on a fresh machine. Manually re-running the script with the same arguments is friction; RunOnce + a base64-encoded payload restores the exact original invocation. |
 | Win32 Input Mode reset after every `wsl.exe` | `wsl.exe` enables Win32 Input Mode and focus reporting on the parent console and doesn't restore them. Without `Reset-TerminalInputMode`, follow-up `Read-Host` prompts echo `^[[I` etc. |
 | `Invoke-NativeConsole` (Start-Process -NoNewWindow -Wait) | We need the child to see a real TTY so `/dev/tty` reads inside the bootstrap (interactive prompts) work. Plain `& wsl.exe` over a pipeline breaks this. |

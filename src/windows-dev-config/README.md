@@ -212,7 +212,7 @@ The Visual C++ runtime is installed before uv, matching Windows' native architec
 | No Start menu recommendations | `HKCU\...\Explorer\Advanced\Start_IrisRecommendations` | `0` |
 | No Start menu account notifications | `HKCU\...\Explorer\Advanced\Start_AccountNotifications` | `0` |
 | Widgets off | `HKLM\SOFTWARE\Policies\Microsoft\Dsh\AllowNewsAndInterests` | `0` |
-| No PowerToys always-on-top toasts | `HKCU\...\Notifications\Settings\PowerToys\Enabled` | `0` |
+| No PowerToys always-on-top toasts | `HKCU\...\Notifications\Settings\Microsoft.PowerToysWin32\Enabled` | `0` |
 
 Widgets are turned off through OS policy. If Windows protects that policy, the step is flagged and setup continues.
 
@@ -457,7 +457,7 @@ Either way, running the original command again is safe and picks up exactly wher
 <details>
 <summary><strong>"Windows Terminal's settings file couldn't be read as JSON"</strong></summary>
 
-Your `settings.json` has a syntax error, so the setup stopped rather than overwrite a file it couldn't understand. Fix or rename the file named in the message, then run the setup again.
+Your `settings.json` has a syntax error, so the Terminal step was flagged and skipped rather than overwrite a file it couldn't understand; the rest of the setup continued. Fix or rename the file named in the message, then run the setup again.
 
 </details>
 

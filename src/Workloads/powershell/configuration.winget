@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
 #
-#     winget configure --file scripts/windows/powershell/configuration.winget `
+#     winget configure --file Workloads/powershell/configuration.winget `
 #         --accept-configuration-agreements `
 #         --disable-interactivity
 #
